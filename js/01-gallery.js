@@ -4,57 +4,67 @@ import { galleryItems } from './gallery-items.js';
   console.log(galleryItems);
 
 
-const paletteGallery = document.querySelector('.gallery');
-const galleryMarkup = createGalleryItems (galleryItems);
+  
+  const paletteGallery = document.querySelector('.gallery');
+  const galleryMarkup = createGalleryItems (galleryItems);
 
-paletteGallery.insertAdjacentHTML('beforeend', galleryMarkup);
+  paletteGallery.insertAdjacentHTML('beforeend', galleryMarkup);
 
 
-
+  paletteGallery.addEventListener('click', onSmallImageClick) ;
+  
 function createGalleryItems (items) {
-    return items.map(({preview, original, description}) => {
-        return `
-        <div class="gallery__item">
-        <a class="gallery__link" href="${original}">
-          <img
-            class="gallery__image"
-            src="${preview}"
-            data-source="${original}"
-            alt="${description}"
-          />
-        </a>
-      </div>
-      `;
-    }).join('');
-    
-};
-
- paletteGallery.addEventListener('click',onPaletteGalleryClick);
-
-  function  onPaletteGalleryClick (e) {
-    e.preventDefault();
-   if (e.target.nodeName !== 'IMG'){
-   return
- };
-
-  const bigImg = basicLightbox.create(`
-   <img src="${e.target.dataset.source}" 
-    width="800" height="600">
-    `)
-    bigImg.show()
-
-    paletteGallery.addEventListener('keyup', function (e){
+      return items.map(({ preview, original, description }) => 
+      
+          `<div class="gallery__item">
+           <a class="gallery__link" href="${original}">
+           <img
+              class="gallery__image"
+              src="${preview}"
+              data-source="${original}"
+              alt="${description}"
+           />
+          </a>
+          </div>`
+      )
+          .join('');
+  };
+  
+  function onSmallImageClick(e) {
       e.preventDefault();
-      console.log(e.code);
-     if (e.code === 'Escape'){
-      bigImg.close();
-     }
-    });
-
-};
+      console.log("Some img clicked");
+      const isImg = e.target.classList.contains('gallery__image');
+      if (!isImg) {
+          return;
+      }
+  
+      const urlOfBigImg = e.target.dataset.source;
+      
+      openModal(urlOfBigImg);
+  }
+  
+  function openModal(url) {
+      const closeModal = e => {
+  if (e.code === 'Escape') { bigImg.close(); }
+  };
+  
+      const bigImg = basicLightbox.create(`
+      <img src="${url}">`,
+          {
+              onShow: (bigImg) =>
+                  window.addEventListener('keydown', closeModal),
+              onClose: (bigImg) =>
+                  window.removeEventListener('keydown', closeModal)
+          });
+          bigImg.show();
+  } ;
 
 
   
 
+
+
+
+  
 
 
